@@ -26,7 +26,7 @@ Engine buildDemoEngine() {
   // place-order -> inventory: alert on low stock
   engine.bind('inventory.low_stock', HookPoint.after, 'place-order',
       (ctx, node) async {
-    final low = ctx['low_stock_items'] as List<String>? ?? [];
+    final low = ctx.lowStockItems;
     if (low.isNotEmpty) {
       ctx['customer_alert'] = 'Low stock warning sent for: ${low.join(', ')}';
     }
@@ -45,7 +45,7 @@ Engine buildDemoEngine() {
 
 Context makeCart(List<Map<String, dynamic>> items, {String? risk}) {
   final ctx = Context();
-  ctx['cart'] = items;
+  ctx.cart = items;
   if (risk != null) ctx['customer_risk'] = risk;
   return ctx;
 }

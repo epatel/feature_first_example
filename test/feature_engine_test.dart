@@ -1,6 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:feature_first_example/feature_engine.dart';
 import 'package:feature_first_example/demo_setup.dart';
+import 'package:feature_first_example/features/place_order/place_order.dart';
+import 'package:feature_first_example/features/inventory/inventory.dart';
 
 void main() {
   group('Pipeline execution', () {
@@ -437,10 +439,10 @@ void main() {
       await engine.run('place-order', ctx);
 
       expect(ctx.isAborted, false);
-      expect(ctx['validated'], true);
-      expect(ctx['total'], 39.98);
-      expect(ctx['payment_status'], 'charged');
-      expect(ctx['order_id'], startsWith('ORD-'));
+      expect(ctx.validated, true);
+      expect(ctx.total, 39.98);
+      expect(ctx.paymentStatus, 'charged');
+      expect(ctx.orderId, startsWith('ORD-'));
       expect(ctx['metrics'], ['validate_cart', 'calculate_totals',
           'charge_payment', 'confirm_order']);
     });
@@ -455,7 +457,7 @@ void main() {
 
       expect(ctx.isAborted, true);
       expect(ctx.abortReason, 'Out of stock: gadget');
-      expect(ctx['payment_status'], null);
+      expect(ctx['payment_status'], null); // never reached
     });
 
     test('inventory pipeline triggers place-order alert hook', () async {
@@ -463,7 +465,7 @@ void main() {
 
       final ctx = await engine.run('inventory');
 
-      expect(ctx['low_stock_items'], contains('gadget'));
+      expect(ctx.lowStockItems, contains('gadget'));
       expect(ctx['customer_alert'], contains('gadget'));
     });
 
@@ -475,9 +477,9 @@ void main() {
         HookPoint.before,
         'holiday',
         (ctx, node) async {
-          final d = (ctx['discounts'] as List<double>?) ?? [];
+          final d = ctx.discounts;
           d.add(5.0);
-          ctx['discounts'] = d;
+          ctx.discounts = d;
         },
       );
 
@@ -485,7 +487,7 @@ void main() {
         {'name': 'widget', 'price': 29.99},
       ]);
       await engine.run('place-order', ctx);
-      expect(ctx['total'], 24.99);
+      expect(ctx.total, 24.99);
 
       handle.unbind();
 
@@ -493,7 +495,7 @@ void main() {
         {'name': 'widget', 'price': 29.99},
       ]);
       await engine.run('place-order', ctx2);
-      expect(ctx2['total'], 29.99);
+      expect(ctx2.total, 29.99);
     });
   });
 

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'feature_engine.dart';
 import 'demo_setup.dart';
+import 'features/place_order/place_order.dart';
+import 'features/inventory/inventory.dart';
 import 'widgets/log_view.dart';
 import 'widgets/control_panel.dart';
 
@@ -80,7 +82,7 @@ class _DemoPageState extends State<DemoPage> {
     } else {
       final metrics = (ctx['metrics'] as List<String>?) ?? [];
       _addLog(
-          'order=${ctx['order_id']}  total=${ctx['total']}  metrics=${metrics.length} events',
+          'order=${ctx.orderId}  total=${ctx.total}  metrics=${metrics.length} events',
           type: LogType.result);
     }
   }
@@ -89,7 +91,7 @@ class _DemoPageState extends State<DemoPage> {
     _addLog('inventory', type: LogType.header);
     final ctx = await _engine.run('inventory');
     _appendTrace(ctx);
-    final low = ctx['low_stock_items'] as List<String>? ?? [];
+    final low = ctx.lowStockItems;
     final alert = ctx['customer_alert'] as String?;
     _addLog('low_stock=$low', type: LogType.result);
     if (alert != null) _addLog('  $alert', type: LogType.hook);
@@ -108,9 +110,9 @@ class _DemoPageState extends State<DemoPage> {
           HookPoint.before,
           'holiday_pricing',
           (ctx, node) async {
-            final discounts = (ctx['discounts'] as List<double>?) ?? [];
-            discounts.add(5.0);
-            ctx['discounts'] = discounts;
+            final d = ctx.discounts;
+            d.add(5.0);
+            ctx.discounts = d;
           },
         );
         _holidayActive = true;
