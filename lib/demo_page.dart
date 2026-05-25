@@ -63,7 +63,7 @@ class _DemoPageState extends State<DemoPage> {
     final ctx = makeCart(cart, risk: risk);
 
     HookHandle? perRequestFraud;
-    if (_fraudActive && ctx['customer_risk'] == 'high') {
+    if (_fraudActive && ctx.customerRisk == 'high') {
       perRequestFraud = _engine.dynamicBind(
         'place-order.charge_payment',
         HookPoint.before,
@@ -80,9 +80,8 @@ class _DemoPageState extends State<DemoPage> {
       _addLog('ABORTED at ${ctx.abortedAt}: ${ctx.abortReason}',
           type: LogType.result);
     } else {
-      final metrics = (ctx['metrics'] as List<String>?) ?? [];
       _addLog(
-          'order=${ctx.orderId}  total=${ctx.total}  metrics=${metrics.length} events',
+          'order=${ctx.orderId}  total=${ctx.total}  metrics=${ctx.metrics.length} events',
           type: LogType.result);
     }
   }
@@ -92,7 +91,7 @@ class _DemoPageState extends State<DemoPage> {
     final ctx = await _engine.run('inventory');
     _appendTrace(ctx);
     final low = ctx.lowStockItems;
-    final alert = ctx['customer_alert'] as String?;
+    final alert = ctx.customerAlert;
     _addLog('low_stock=$low', type: LogType.result);
     if (alert != null) _addLog('  $alert', type: LogType.hook);
   }

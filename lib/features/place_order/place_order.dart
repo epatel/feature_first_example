@@ -20,6 +20,12 @@ extension PlaceOrderContext on Context {
 
   String get orderId => this['order_id'] as String;
   set orderId(String v) => this['order_id'] = v;
+
+  String? get customerRisk => this['customer_risk'] as String?;
+  set customerRisk(String? v) => this['customer_risk'] = v;
+
+  List<String> get metrics => (this['metrics'] as List<String>?) ?? [];
+  set metrics(List<String> v) => this['metrics'] = v;
 }
 
 Feature definePlaceOrder(Engine engine) {

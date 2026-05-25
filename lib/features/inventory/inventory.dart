@@ -6,6 +6,9 @@ extension InventoryContext on Context {
 
   List<String> get lowStockItems => this['low_stock_items'] as List<String>;
   set lowStockItems(List<String> v) => this['low_stock_items'] = v;
+
+  String? get customerAlert => this['customer_alert'] as String?;
+  set customerAlert(String? v) => this['customer_alert'] = v;
 }
 
 Feature defineInventory(Engine engine) {

@@ -443,7 +443,7 @@ void main() {
       expect(ctx.total, 39.98);
       expect(ctx.paymentStatus, 'charged');
       expect(ctx.orderId, startsWith('ORD-'));
-      expect(ctx['metrics'], ['validate_cart', 'calculate_totals',
+      expect(ctx.metrics, ['validate_cart', 'calculate_totals',
           'charge_payment', 'confirm_order']);
     });
 
@@ -466,7 +466,7 @@ void main() {
       final ctx = await engine.run('inventory');
 
       expect(ctx.lowStockItems, contains('gadget'));
-      expect(ctx['customer_alert'], contains('gadget'));
+      expect(ctx.customerAlert, contains('gadget'));
     });
 
     test('dynamic holiday discount modifies totals', () async {
