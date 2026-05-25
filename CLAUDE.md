@@ -9,8 +9,10 @@ A Flutter demo of feature-first architecture where each feature is a pipeline of
 
 ### Domains
 - [feature-engine](cards/feature-engine.md) — modifying Engine, Feature, Node, Context, or HookHandle
-- [place-order](cards/place-order.md) — touching order pipeline, cart, totals, payment, or confirmation
-- [inventory](cards/inventory.md) — touching stock levels, low-stock detection, or warehouse queries
+
+Per-feature contracts are co-located (auto-discovered by Claude Code):
+- `lib/features/place_order/CLAUDE.md` → `@CLAUDE_full.md`
+- `lib/features/inventory/CLAUDE.md`
 
 ### Features
 - [hook-wiring](cards/hook-wiring.md) — adding/changing hooks, understanding static vs dynamic wiring
@@ -22,9 +24,9 @@ A Flutter demo of feature-first architecture where each feature is a pipeline of
 
 1. Create `lib/features/<name>/` with `<name>.dart` and `CLAUDE.md`
 2. Define the feature pipeline in `<name>.dart` — register nodes with `engine.feature('<name>')`
-3. Wire hooks in `lib/demo_setup.dart` — read target feature's card for context keys and hook guidance
-4. Add a card under `cards/` and add it to the index above
-5. Update the target feature's card — add your hook under "Hooked by"
+3. Wire hooks in `lib/demo_setup.dart` — read target feature's CLAUDE.md for context keys and hook guidance
+4. Document the contract in `CLAUDE.md` (single file if ≤40 lines / ≤2 nodes; split to `CLAUDE_full.md` if larger)
+5. Update the target feature's CLAUDE.md — add your hook under "Hooked by"
 6. Write tests in `test/` — use `ctx.traceLog` to verify hooks fire at the right nodes
 
 ## Testing

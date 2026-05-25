@@ -2,6 +2,11 @@
 
 Pipeline that processes a customer order from cart to confirmation.
 
+**Public surface**: `definePlaceOrder(engine)` registers the feature and its four nodes.
+
+**Owns**: cart validation, total calculation, payment charging, order confirmation.
+**Does not own**: stock availability (inventory feature), pricing adjustments (dynamic hooks), fraud detection (dynamic hooks), analytics (static hook).
+
 ## Nodes
 
 ### validate_cart
@@ -35,11 +40,18 @@ Pipeline that processes a customer order from cart to confirmation.
 | `payment_status` | `String`                | charge_payment      | confirm_order        |
 | `order_id`       | `String`                | confirm_order       |                      |
 | `metrics`        | `List<String>?`         | analytics hook      |                      |
+| `customer_risk`  | `String?`               | caller              | fraud hook           |
 
 ## Existing hooks from other features
 
-- **inventory** → `validate_cart.before` [static] — aborts if cart contains out-of-stock items
-- **analytics** → `*.after` [static] — observes all nodes, appends node name to `metrics`
+**Static:**
+- **inventory** → `validate_cart.before` — aborts if cart contains out-of-stock items
+- **analytics** → `*.after` — observes all nodes, appends node name to `metrics`
+
+**Dynamic (bound/unbound at runtime):**
+- **holiday_pricing** → `calculate_totals.before` — injects a $5 discount into `ctx['discounts']`
+- **fraud** → `charge_payment.before` — bound per-request for high-risk customers (`ctx['customer_risk'] == 'high'`), unbound after run
+- **debug** → `*.before` — wildcard observer on all nodes
 
 ## How to add behavior
 
